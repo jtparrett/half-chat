@@ -1,6 +1,8 @@
 import React from 'react'
 import {compose, lifecycle} from 'recompose'
 import injectSheet from 'react-jss'
+import ReactAutolink from 'react-autolink'
+import {shell} from 'electron'
 
 const styles = {
   main: {
@@ -32,11 +34,17 @@ const styles = {
 let foot
 let main
 
+const openLink = (e) => {
+  e.preventDefault()
+  shell.openExternal(e.target.href)
+  return false
+}
+
 const View = ({messages, currentMessage, createMessage, updateCurrentMessage, classes}) => (
   <div className={classes.main}>
     <div className={classes.messages} ref={el => main = el}>
       {Object.values(messages).map((message, i) => (
-        <p key={i} className={classes.message}>{message}</p>
+        <p key={i} className={classes.message}>{ReactAutolink.autolink(message, {onClick: openLink})}</p>
       ))}
       <div ref={el => foot = el} />
     </div>

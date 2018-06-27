@@ -61,7 +61,7 @@ const connectHost = ({host, createPeer}) => (e) => {
 
 const createMessage = ({currentMessage, updateCurrentMessage, addMessage, broadcast}) => (e) => {
   e.preventDefault()
-  const id = SHA256(currentMessage).toString()
+  const id = SHA256(currentMessage + new Date().getTime()).toString()
   addMessage(id, currentMessage)
   broadcast({ id, message: currentMessage })
   updateCurrentMessage('')

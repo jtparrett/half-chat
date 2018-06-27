@@ -13,6 +13,7 @@
     "crypto-js": "^3.1.9-1",
     "electron": "^2.0.3",
     "react": "^16.4.1",
+    "react-autolink": "^0.2.1",
     "react-dom": "^16.4.1",
     "react-jss": "^8.6.0",
     "recompose": "^0.27.1"
