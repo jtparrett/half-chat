@@ -1,0 +1,24 @@
+{
+  "name": "half-chat",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron ."
+  },
+  "bin": {
+    "half-chat": "./bin.sh"
+  },
+  "dependencies": {
+    "crypto-js": "^3.1.9-1",
+    "electron": "^2.0.3",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "react-jss": "^8.6.0",
+    "recompose": "^0.27.1"
+  },
+  "devDependencies": {
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "electron-prebuilt-compile": "^2.0.3"
+  }
+}
