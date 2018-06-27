@@ -40,6 +40,7 @@ const createPeer = ({updatePeers, peers, removePeer, addMessage, messages, broad
       const msg = JSON.parse(data.toString())
 
       if(msg.message && !messages[msg.id]){
+        new Notification('Half-Chat', { body: msg.message })
         addMessage(msg.id, msg.message)
         broadcast(msg, peer)
       }
