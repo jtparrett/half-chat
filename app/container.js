@@ -5,12 +5,15 @@ import SHA256 from 'crypto-js/sha256'
 import ConnectView from './connect'
 import MessagesView from './messages'
 
+const genColor = () => Math.floor(Math.random() * 200) + 30
+
+const color = `rgb(${genColor()}, ${genColor()}, ${genColor()})`
 const port = 1995
 
-const addMessage = ({messages, updateMessages}) => (id, message) => {
+const addMessage = ({messages, updateMessages}) => (id, message, color) => {
   updateMessages({
     ...messages,
-    [id]: message
+    [id]: {message, color}
   })
 }
 
@@ -41,7 +44,7 @@ const createPeer = ({updatePeers, peers, removePeer, addMessage, messages, broad
 
       if(msg.message && !messages[msg.id]){
         new Notification('Half-Chat', { body: msg.message })
-        addMessage(msg.id, msg.message)
+        addMessage(msg.id, msg.message, msg.color)
         broadcast(msg, peer)
       }
     } catch(err) {
@@ -62,8 +65,8 @@ const connectHost = ({host, createPeer}) => (e) => {
 const createMessage = ({currentMessage, updateCurrentMessage, addMessage, broadcast}) => (e) => {
   e.preventDefault()
   const id = SHA256(currentMessage + new Date().getTime()).toString()
-  addMessage(id, currentMessage)
-  broadcast({ id, message: currentMessage })
+  addMessage(id, currentMessage, color)
+  broadcast({ id, message: currentMessage, color })
   updateCurrentMessage('')
 }
 

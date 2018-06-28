@@ -12,7 +12,8 @@ const styles = {
   },
   messages: {
     flex: 1,
-    overflow: 'auto'
+    overflow: 'auto',
+    padding: 10
   },
   input: {
     boxSizing: 'border-box',
@@ -21,12 +22,12 @@ const styles = {
     border: 'none',
     borderTop: '1px solid #ddd',
     outline: 'none',
-    fontSize: 14
+    fontSize: 12
   },
   message: {
     margin: 0,
-    padding: 15,
-    fontSize: 14
+    padding: 5,
+    fontSize: 12
   }
 }
 
@@ -44,7 +45,7 @@ const View = ({messages, currentMessage, createMessage, updateCurrentMessage, cl
   <div className={classes.main}>
     <div className={classes.messages} ref={el => main = el}>
       {Object.values(messages).map((message, i) => (
-        <p key={i} className={classes.message}>{ReactAutolink.autolink(message, {onClick: openLink})}</p>
+        <p key={i} className={classes.message} style={{ color: message.color }}>{ReactAutolink.autolink(message.message, {onClick: openLink})}</p>
       ))}
       <div ref={el => foot = el} />
     </div>

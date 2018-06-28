@@ -6,8 +6,21 @@ import Container from './container'
 
 const styles = {
   '@global': {
+    '@font-face': [{
+      fontFamily: 'Open Sans',
+      fontWeight: 700,
+      src: 'url("assets/fonts/OpenSans-Bold.ttf")'
+    },{
+      fontFamily: 'Open Sans',
+      fontWeight: 400,
+      src: 'url("assets/fonts/OpenSans-Regular.ttf")'
+    }],
     body: {
-      margin: 0
+      margin: 0,
+      fontFamily: 'Open Sans, Arial, sans-serif'
+    },
+    a: {
+      color: '#ff8330'
     }
   }
 }
