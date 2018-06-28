@@ -20,7 +20,7 @@ const addMessage = ({messages, updateMessages}) => (id, message, color) => {
 const broadcast = ({peers}) => (data, sender) => {
   const msg = JSON.stringify(data)
   Object.values(peers).forEach(peer => {
-    if(peer === sender) return
+    if(typeof peer !== 'object' || peer === sender) return
     peer.write(msg)
   })
 }
@@ -33,17 +33,28 @@ const removePeer = ({updatePeers, peers}) => (host) => {
 
 const createPeer = ({updatePeers, peers, removePeer, addMessage, messages, broadcast}) => (peer, host) => {
   const selfHost = host || peer.remoteAddress.replace(/^.*:/, '')
-  updatePeers({
+  let updatedPeers = {
     ...peers,
     [selfHost]: peer
-  })
+  }
+  updatePeers(updatedPeers)
 
   peer.on('data', (data) => {
     try {
       const msg = JSON.parse(data.toString())
 
+      if(msg.connectionTable){
+        updatedPeers = {
+          ...msg.connectionTable,
+          ...updatedPeers
+        }
+
+        delete updatedPeers[msg.selfHost]
+        updatePeers(updatedPeers)
+        findPeers({ peers: updatedPeers, createPeer })(0)
+      }
+
       if(msg.message && !messages[msg.id]){
-        new Notification('Half-Chat', { body: msg.message })
         addMessage(msg.id, msg.message, msg.color)
         broadcast(msg, peer)
       }
@@ -56,6 +67,21 @@ const createPeer = ({updatePeers, peers, removePeer, addMessage, messages, broad
   peer.on('end', () => removePeer(selfHost))
 }
 
+const findPeers = ({peers, createPeer}) => (startPeerIndex) => {
+  let searchIndex = 1
+  const keys = Object.keys(peers)
+  while(searchIndex < keys.length){
+    const index = (startPeerIndex + searchIndex) % keys.length
+    const host = keys[index-1]
+    const preConnected = keys.some(k => k === host && typeof peers[k] === 'object')
+    if(host && !preConnected){
+      const newPeer = net.connect({host, port})
+      createPeer(newPeer, host)
+    }
+    searchIndex *= 2
+  }
+}
+
 const connectHost = ({host, createPeer}) => (e) => {
   e.preventDefault()
   const hostPeer = net.connect({host, port})
@@ -65,7 +91,6 @@ const connectHost = ({host, createPeer}) => (e) => {
 const createMessage = ({currentMessage, updateCurrentMessage, addMessage, broadcast}) => (e) => {
   e.preventDefault()
   const id = SHA256(currentMessage + new Date().getTime()).toString()
-  addMessage(id, currentMessage, color)
   broadcast({ id, message: currentMessage, color })
   updateCurrentMessage('')
 }
